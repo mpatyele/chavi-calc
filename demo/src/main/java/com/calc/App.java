@@ -12,46 +12,62 @@ public class App {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         char command = '_';
-        float a = 0.0f, b = 0.0f;
+        float a = 0.0f, b = 0.0f, result = 0.0f;
 
         // loop until user quits
         while (command != 'q') {
-            printMenu(a, b);
+            printMenu(a, b, result);
             System.out.print("Enter a command: ");
-            command = menuGetCommand(scan);
+            String input = scan.nextLine().trim();
             
-            if (command == 'a') {
-                System.out.print("Enter value for A: ");
-                if (scan.hasNextFloat()) {
-                    a = scan.nextFloat();
-                } else {
-                    System.out.println("ERROR: Invalid number input.");
-                    scan.nextLine();
-                    continue;
-                }
-                scan.nextLine();
-            } else if (command == 'b') {
-                System.out.print("Enter value for B: ");
-                if (scan.hasNextFloat()) {
-                    b = scan.nextFloat();
-                } else {
-                    System.out.println("ERROR: Invalid number input.");
-                    scan.nextLine();
-                    continue;
-                }
-                scan.nextLine();
-            } else if (command == '+' || command == '-' || command == '*' || command == '/') {
-                float result = executeCommand(command, a, b);
-                System.out.printf("Result: %.3f\n", result);
-            } else if (command == 'c') {
-                a = 0.0f;
-                b = 0.0f;
-                System.out.println("Values cleared.");
-            } else if (command == 'q') {
-                System.out.println("Thank you for using ChavviCalc.");
-                break;
+            if (input.length() == 1) {
+                command = input.charAt(0);
             } else {
-                System.out.println("ERROR: Unknown command");
+                System.out.println("ERROR: Invalid command. Please enter a single-character command.");
+                continue;
+            }
+            
+            switch (command) {
+                case 'a':
+                    System.out.print("Enter value for A: ");
+                    a = getValidFloat(scan);
+                    break;
+                case 'b':
+                    System.out.print("Enter value for B: ");
+                    b = getValidFloat(scan);
+                    break;
+                case '+':
+                    result = a + b;
+                    System.out.printf("Result: %.3f\n", result);
+                    break;
+                case '-':
+                    result = a - b;
+                    System.out.printf("Result: %.3f\n", result);
+                    break;
+                case '*':
+                    result = a * b;
+                    System.out.printf("Result: %.3f\n", result);
+                    break;
+                case '/':
+                    if (b == 0) {
+                        System.out.println("ERROR: Division by zero.");
+                    } else {
+                        result = a / b;
+                        System.out.printf("Result: %.3f\n", result);
+                    }
+                    break;
+                case 'c':
+                    a = 0.0f;
+                    b = 0.0f;
+                    result = 0.0f;
+                    System.out.println("Values cleared.");
+                    break;
+                case 'q':
+                    System.out.println("Thank you for using ChavviCalc.");
+                    break;
+                default:
+                    System.out.println("ERROR: Unknown command");
+                    break;
             }
         }
         scan.close();
@@ -65,11 +81,11 @@ public class App {
         System.out.printf("%s\t%s\n", command, desc);
     }
 
-    public static void printMenu(float a, float b) {
+    public static void printMenu(float a, float b, float result) {
         printMenuLine();
         System.out.println("ChavviCalc");
         printMenuLine();
-        System.out.printf("A = %.3f      B = %.3f\n", a, b);
+        System.out.printf("A = %.3f      B = %.3f      Result = %.3f\n", a, b, result);
         printMenuLine();
         printMenuCommand('a', "Enter a value for A");
         printMenuCommand('b', "Enter a value for B");
@@ -82,29 +98,13 @@ public class App {
         printMenuLine();
     }
 
-    private static char menuGetCommand(Scanner scan) {
-        String rawInput = scan.nextLine().trim();
-        return rawInput.length() > 0 ? rawInput.charAt(0) : '_';
-    }
-
-    private static float executeCommand(char command, float a, float b) {
-        switch (command) {
-            case '+':
-                return a + b;
-            case '-':
-                return a - b;
-            case '*':
-                return a * b;
-            case '/':
-                if (b != 0) {
-                    return a / b;
-                } else {
-                    System.out.println("Error: Division by zero.");
-                    return 0;
-                }
-            default:
-                System.out.println("ERROR: Unknown command");
-                return 0;
+    private static float getValidFloat(Scanner scan) {
+        while (!scan.hasNextFloat()) {
+            System.out.println("ERROR: Invalid number input. Please enter a valid float value.");
+            scan.next();
         }
+        float value = scan.nextFloat();
+        scan.nextLine(); // Consume newline
+        return value;
     }
 }
