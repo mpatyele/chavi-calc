@@ -19,14 +19,14 @@ public class App {
             printMenu(a, b, result);
             System.out.print("Enter a command: ");
             String input = scan.nextLine().trim();
-            
+
             if (input.length() == 1) {
                 command = input.charAt(0);
             } else {
                 System.out.println("ERROR: Invalid command. Please enter a single-character command.");
                 continue;
             }
-            
+
             switch (command) {
                 case 'a':
                     System.out.print("Enter value for A: ");
@@ -101,10 +101,11 @@ public class App {
     private static float getValidFloat(Scanner scan) {
         while (!scan.hasNextFloat()) {
             System.out.println("ERROR: Invalid number input. Please enter a valid float value.");
-            scan.next();
+            scan.nextLine(); // Clear invalid input
         }
         float value = scan.nextFloat();
-        scan.nextLine(); // Consume newline
+        scan.nextLine(); // Ensure newline is consumed
         return value;
     }
+
 }
